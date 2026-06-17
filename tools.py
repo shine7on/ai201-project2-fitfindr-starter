@@ -129,7 +129,7 @@ def suggest_outfit(new_item: dict, wardrobe: dict) -> str:
 
     Before writing code, fill in the Tool 2 section of planning.md.
     """
-    # Replace this with your implementation
+
     
     client = _get_groq_client()
     wardrobe_items = wardrobe.get("items", [])
@@ -153,12 +153,13 @@ def suggest_outfit(new_item: dict, wardrobe: dict) -> str:
 
             Their current wardrobe includes:
             {wardrobe_str}
-            Suggest 1-2 specific outfit combinations using the new item and named pieces from their wardrobe."""
+        
+        Suggest 1-2 specific outfit combinations using the new item and named pieces from their wardrobe."""
 
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[{"role": "user", "content": prompt}],
-        )
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": prompt}],
+    )
     return response.choices[0].message.content
 
 
