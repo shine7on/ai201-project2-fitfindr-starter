@@ -16,18 +16,23 @@ You must have at least 3 tools. The three required tools are listed — add any 
 
 **What it does:**
 <!-- Describe what this tool does in 1–2 sentences -->
+Searches the mock listings dataset based on the input and returns matching items.
+If it dont not find any matches, return 'couldn't find' to the user and ask more info (or fallback strategy: different size?)
 
 **Input parameters:**
 <!-- List each parameter, its type, and what it represents -->
-- `description` (str): ...
-- `size` (str): ...
-- `max_price` (float): ...
+- `description` (str): describe about this item; name
+- `size` (str): size the user is looking for
+- `max_price` (float): maximum price the user would pay
 
 **What it returns:**
 <!-- Describe the return value — what fields does a result contain? -->
+If it finds something that matches user's request, it will returns three matching listings by relevalnce.
+The return result should follow the 'items' schema.
 
 **What happens if it fails or returns nothing:**
 <!-- What should the agent do if no listings match? -->
+Return 'couldn't find' to the user and ask more info.
 
 ---
 
@@ -35,17 +40,21 @@ You must have at least 3 tools. The three required tools are listed — add any 
 
 **What it does:**
 <!-- Describe what this tool does in 1–2 sentences -->
+It suggests the outfit that fits well with the new item based on user's wardrobe.
+
 
 **Input parameters:**
 <!-- List each parameter, its type, and what it represents -->
-- `new_item` (dict): ...
-- `wardrobe` (dict): ...
+- `new_item` (dict): new item; use item schema
+- `wardrobe` (dict): user's wardrobe that contains multiple items.
 
 **What it returns:**
 <!-- Describe the return value -->
+Return string that tells outfit such as "Pair this with your wide-leg jeans and platform Docs for a classic 90s grunge look. Roll the sleeves once and tuck the front corner slightly for shape."
 
 **What happens if it fails or returns nothing:**
 <!-- What should the agent do if the wardrobe is empty or no outfit can be suggested? -->
+Return that 'Could not find' message to a user.
 
 ---
 
@@ -56,14 +65,16 @@ You must have at least 3 tools. The three required tools are listed — add any 
 
 **Input parameters:**
 <!-- List each parameter, its type, and what it represents -->
-- `outfit` (str): ...
-- `new_item` (dict): ...
+- `outfit` (str): explain about the outfit
+- `new_item` (dict): new item user bought which used in the outfit coordinate
 
 **What it returns:**
 <!-- Describe the return value -->
+Return the string talking about this new item and outfit such as "thrifted this faded band tee off depop for $22 and honestly it was made for my wide-legs 🖤 full look in my stories."
 
 **What happens if it fails or returns nothing:**
 <!-- What should the agent do if the outfit data is incomplete? -->
+Return the message 'Incomplete outfit.'
 
 ---
 
