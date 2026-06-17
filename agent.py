@@ -94,7 +94,55 @@ def run_agent(query: str, wardrobe: dict) -> dict:
     """
     # TODO: implement the planning loop
     session = _new_session(query, wardrobe)
-    session["error"] = "Planning loop not yet implemented."
+
+    # step 2: parse the query using LLM: parse -> breaking down to smaller words
+    from tools import _get_groq_client
+    client = _get_groq_client()
+    parse_response = client.chat.completions.create(
+        model = 'llama-3.3-70b-versatile',
+        messages = [{
+            "role": "user", "content":
+            f"""Extract search parameters from this query: "{query}"
+            Return ONLY a JSON object with these keys:
+            - description (str): the item being searched for
+            - size (str or null): size if mentioned, else null
+            - max_price (float or null): max price if mentioned, else null
+
+            Example: {{"description": "vintage graphic tee", "size": "M", "max_price": 30.0}}"""
+        }],
+        response_format = {'type': 'json_object'},
+    )
+
+    import json
+    parsed = json.loads(parse_response.choices[0].message.content)
+    session["parsed"] = parsed
+
+    # step 3: Call search_listings() with the parsed parameters
+    results = search_listings(
+        description = parsed.get("description", query), # if there is no description, use original query
+        size = parsed.get("size"),
+        max_price = parsed.get('max_prince'),
+    )
+    session["search_results"] = results
+    
+    if not results:
+        session["error"] = (
+            f"Couldn't find anything matching '{parsed.get('description', query)}' "
+            f"with your filters. Try a broader description, different size, or higher budget."
+        )
+        return session
+
+    # step 4: select top item
+    session["selected_item"] = results[0]
+
+    # step 5: suggest outfit
+    outfit = suggest_outfit(session["selected_item"], wardrobe)
+    session["outfit_suggestion"] = outfit
+
+    # step 6: create fit card
+    fit_card = create_fit_card(outfit, session["selected_item"])
+    session["fit_card"] = fit_card
+
     return session
 
 
